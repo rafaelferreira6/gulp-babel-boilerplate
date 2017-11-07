@@ -1,4 +1,5 @@
 import path from "path"
+import webpack from "webpack"
 
 
 let isProduction = global.isProduction;
@@ -7,13 +8,16 @@ let devtool = isProduction ? null : "#source-map";
 
 export default {
 
-  entry: {
-    app: "./src/js/app.js"
-  },
+  entry: [
+    "webpack/hot/dev-server",
+    "webpack-hot-middleware/client",
+    "./src/js/app.js"
+  ],
 
   output: {
     path: path.join(__dirname, "dist/js"),
-    filename: "[name].bundle.js"
+    publicPath: '/dist/js',
+    filename: "app.bundle.js"
   },
 
   devtool,
@@ -40,5 +44,6 @@ export default {
   },
 
   plugins: [
+    new webpack.HotModuleReplacementPlugin()
   ]
 };

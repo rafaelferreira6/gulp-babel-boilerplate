@@ -1,10 +1,23 @@
+/*
+  Forked of: https://github.com/tsuyoshiwada/gulp-babel-boilerplate
+
+  Mojor differences updates: 
+  1. replace deprecated rimraf per del
+  2. added webpack HMR to work with browserSync. 
+     🙌 http://jsramblings.com/2016/07/16/hot-reloading-gulp-webpack-browsersync.webpackHotMiddleware
+*/
 import gulp from "gulp"
 import gulpLoadPlugins from "gulp-load-plugins"
-import webpack from "webpack"
 import del from "del"
+
 import broswerSync from "browser-sync"
 import runSequence from "run-sequence"
 import minimist from "minimist"
+import webpack from "webpack"
+import webpackDevMiddleware from 'webpack-dev-middleware'
+import webpackHotMiddleware from 'webpack-hot-middleware'
+import webpackConfig from './webpack.config.babel.js'
+
 
 let $ = gulpLoadPlugins(),
     bs = broswerSync.create();
@@ -27,14 +40,22 @@ global.isProduction = isProduction;
 
 /**
  * =======================================================
- * $ gulp bs
+ * $ gulp bs with HMR
  * =======================================================
  */
+let bundler = webpack(webpackConfig);
 gulp.task("bs", (cb) => {
   bs.init({
     notify: false,
     server: {
-      baseDir: "./dist"
+      baseDir: "./dist",
+      middleware: [
+        webpackDevMiddleware(bundler, {
+          publicPath: webpackConfig.output.publicPath,
+            stats: { colors: true }
+        }),
+        webpackHotMiddleware(bundler)
+      ]
     }
   });
   cb();
@@ -59,9 +80,8 @@ gulp.task("bs:reload", (cb) => {
  * $ gulp clean
  * =======================================================
  */
-gulp.task("clean", (cb) => {
-  rimraf("./dist", cb);
-});
+gulp.task("clean", (cb) => del(["./dist/"], cb));
+
 
 
 
@@ -71,8 +91,8 @@ gulp.task("clean", (cb) => {
  * =======================================================
  */
 gulp.task("copy-assets", () => {
-  return gulp.src(["./assets/**/*"], {base: "./assets/"})
-  .pipe(gulp.dest("./dist"))
+  return gulp.src(["./assets/**/*"])
+  .pipe(gulp.dest("./dist/"))
   .pipe(bs.stream());
 });
 
@@ -105,12 +125,11 @@ gulp.task("jade", () => {
  * =======================================================
  */
 gulp.task("webpack", (cb) => {
-  webpack(require("./webpack.config.babel.js"), (err, stats) => {
+  webpack(webpackConfig, (err, stats) => {
     if( err ) throw new $.util.PluginError("webpack", err);
     $.util.log("[webpack]", stats.toString());
-    bs.reload();
     cb();
-  });
+  })
 });
 
 
@@ -191,9 +210,10 @@ gulp.task("watch", (cb) => {
         gulp.start("jade");
       });
 
-      $.watch("./src/js/**/*", () => {
-        gulp.start("webpack");
-      });
+      // WEBPACK HMR does the job with browser sync
+      //$.watch("./src/js/**/*", () => {
+       // gulp.start("webpack");
+      //});
 
       $.watch("./src/sass/**/*", () => {
         gulp.start("sass");
