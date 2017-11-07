@@ -1,4 +1,3 @@
-import BowerWebpackPlugin from "bower-webpack-plugin"
 import path from "path"
 
 
@@ -25,7 +24,6 @@ export default {
       path.join(__dirname, "node_modules")
     ],
     moduleDirectories: [
-      "bower_components",
       "node_modules"
     ],
     extensions: ["", ".js", ".jsx", ".webpack.js", ".web.js"]
@@ -42,6 +40,5 @@ export default {
   },
 
   plugins: [
-    new BowerWebpackPlugin()
   ]
 };
