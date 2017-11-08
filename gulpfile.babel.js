@@ -14,8 +14,8 @@ import broswerSync from "browser-sync"
 import runSequence from "run-sequence"
 import minimist from "minimist"
 import webpack from "webpack"
-import webpackDevMiddleware from 'webpack-dev-middleware'
-import webpackHotMiddleware from 'webpack-hot-middleware'
+// import webpackDevMiddleware from 'webpack-dev-middleware'
+// import webpackHotMiddleware from 'webpack-hot-middleware'
 import webpackConfig from './webpack.config.babel.js'
 
 
@@ -43,19 +43,19 @@ global.isProduction = isProduction;
  * $ gulp bs with HMR
  * =======================================================
  */
-let bundler = webpack(webpackConfig);
+//let bundler = webpack(webpackConfig);
 gulp.task("bs", (cb) => {
   bs.init({
     notify: false,
     server: {
       baseDir: "./dist",
-      middleware: [
-        webpackDevMiddleware(bundler, {
-          publicPath: webpackConfig.output.publicPath,
-            stats: { colors: true }
-        }),
-        webpackHotMiddleware(bundler)
-      ]
+      // middleware: [
+      //   webpackDevMiddleware(bundler, {
+      //     publicPath: webpackConfig.output.publicPath,
+      //       stats: { colors: true }
+      //   }),
+      //   webpackHotMiddleware(bundler)
+      // ]
     }
   });
   cb();
@@ -128,6 +128,7 @@ gulp.task("webpack", (cb) => {
   webpack(webpackConfig, (err, stats) => {
     if( err ) throw new $.util.PluginError("webpack", err);
     $.util.log("[webpack]", stats.toString());
+    bs.reload();
     cb();
   })
 });
@@ -210,10 +211,10 @@ gulp.task("watch", (cb) => {
         gulp.start("jade");
       });
 
-      // WEBPACK HMR does the job with browser sync
-      //$.watch("./src/js/**/*", () => {
-       // gulp.start("webpack");
-      //});
+      // WEBPACK HMR did the job with browser sync
+      $.watch("./src/js/**/*", () => {
+        gulp.start("webpack");
+      });
 
       $.watch("./src/sass/**/*", () => {
         gulp.start("sass");

@@ -6,13 +6,14 @@ Simple gulp + webpack boilerplate for front-end development
 ## Features
 * ES6 ready to rumble
 * Live-reload with BrowserSync
-* Javascript bundling & Hot Module Reloading with Webpack.
+* Javascript bundling with Webpack.
 * Compile Scss files
 * Autoprefix styles
 * Compile Jade files
 * Compile Coffee scripts files
 * Support [npm](https://www.npmjs.com/) modules
 * Dev and Production builds
+* Hot Module Reloading [dev branch]
 
 
 ## Install
