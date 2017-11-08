@@ -91,8 +91,8 @@ gulp.task("clean", (cb) => del(["./dist/"], cb));
  * =======================================================
  */
 gulp.task("copy-assets", () => {
-  return gulp.src(["./assets/**/*"])
-  .pipe(gulp.dest("./dist/"))
+  return gulp.src(["./src/assets/**/*"])
+  .pipe(gulp.dest("./dist/assets/"))
   .pipe(bs.stream());
 });
 
